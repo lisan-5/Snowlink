@@ -1,0 +1,139 @@
+# snowlink-ai Advanced Configuration
+# Enterprise-grade settings for production deployment
+
+jira:
+  enabled: true
+  projects:
+    - key: DATA
+      issue_types:
+        - Story
+        - Task
+        - Bug
+        - Epic
+      labels_filter:
+        - data-model
+        - schema-change
+    - key: ANALYTICS
+      issue_types:
+        - Story
+        - Task
+      labels_filter: []
+
+confluence:
+  enabled: true
+  spaces:
+    - key: DATAMODELS
+      page_title_patterns:
+        - "*Data Model*"
+        - "*Schema*"
+        - "*ERD*"
+    - key: ANALYTICS
+      page_title_patterns:
+        - "*Table*"
+        - "*Column*"
+
+snowflake:
+  database: ANALYTICS
+  schema: PUBLIC
+  warehouse: COMPUTE_WH
+  auto_create_comments: true
+  dry_run: false
+
+dbt:
+  enabled: true
+  output_dir: output/dbt_models
+  materialization: table
+  generate_sources: true
+  generate_tests: true
+
+er_diagrams:
+  enabled: true
+  format: mermaid
+  post_to_confluence: true
+  output_dir: output/diagrams
+
+sync:
+  mode: poll
+  interval_seconds: 300
+  batch_size: 10
+  max_retries: 3
+  retry_delay_seconds: 30
+
+llm:
+  primary_provider: openai
+  fallback_providers:
+    - anthropic
+    - ollama
+  models:
+    openai: gpt-4o
+    anthropic: claude-3-5-sonnet-20241022
+    ollama: llama3.1
+  temperature: 0
+  max_tokens: 4096
+
+vector_store:
+  enabled: true
+  persist_directory: data/vector_store
+  embedding_model: text-embedding-3-small
+  chunk_size: 1500
+
+lineage:
+  enabled: true
+  storage_path: data/lineage
+  auto_track: true
+  export_graphviz: true
+
+schema_drift:
+  enabled: true
+  check_on_sync: true
+  notify_on_drift: true
+  severity_threshold: medium  # low, medium, high
+
+data_quality:
+  enabled: true
+  auto_generate_checks: true
+  run_on_sync: false
+  run_schedule: "0 6 * * *"  # Daily at 6am
+  export_to_dbt: true
+
+notifications:
+  slack:
+    enabled: false
+    webhook_url: ${SLACK_WEBHOOK_URL}
+    channel: "#data-sync"
+    on_success: true
+    on_failure: true
+    on_drift: true
+  teams:
+    enabled: false
+    webhook_url: ${TEAMS_WEBHOOK_URL}
+  email:
+    enabled: false
+    smtp_host: smtp.gmail.com
+    smtp_port: 587
+    on_failure: true
+  webhook:
+    enabled: false
+    url: ${CUSTOM_WEBHOOK_URL}
+
+audit:
+  enabled: true
+  db_path: data/audit.db
+  retention_days: 365
+  export_schedule: "0 0 1 * *"  # Monthly
+
+api:
+  enabled: true
+  host: 0.0.0.0
+  port: 8000
+  cors_origins:
+    - "*"
+  rate_limit: 100  # requests per minute
+  api_key_required: false
+
+logging:
+  level: INFO
+  file: logs/snowlink.log
+  max_size_mb: 100
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

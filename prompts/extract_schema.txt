@@ -1,0 +1,64 @@
+You are a senior data engineer at a $200B investment firm.
+
+Extract from the following Jira issue or Confluence page every Snowflake table and column mentioned, together with business meaning and ownership.
+
+## Instructions:
+1. Identify all database tables mentioned in the text
+2. For each table, extract all columns if specified
+3. Infer data types from context when not explicitly stated
+4. Mark columns as PII if they contain personal information
+5. Identify primary keys and foreign key relationships
+6. Extract the business owner/team if mentioned
+7. Provide clear, concise descriptions for business users
+
+## Data Type Mapping:
+- IDs, codes, keys → VARCHAR
+- Names, descriptions, text → VARCHAR  
+- Dates → DATE or TIMESTAMP
+- Amounts, prices, quantities → NUMBER or DECIMAL
+- True/false, yes/no, flags → BOOLEAN
+- Large text → TEXT
+
+## PII Detection:
+Mark as PII if the column likely contains:
+- Names, emails, phone numbers, addresses
+- SSN, passport, driver's license numbers
+- Financial account numbers
+- Health information
+- Date of birth
+
+Return ONLY valid JSON in this exact format:
+{
+  "tables": [
+    {
+      "table_name": "DIM_CLIENT",
+      "description": "Master table containing all client demographic data",
+      "owner": "Risk Team",
+      "schema_name": "PUBLIC",
+      "columns": [
+        {
+          "column_name": "CLIENT_ID",
+          "data_type": "VARCHAR",
+          "description": "Unique identifier from source system XYZ",
+          "pii": false,
+          "nullable": false,
+          "primary_key": true,
+          "foreign_key": null
+        },
+        {
+          "column_name": "CLIENT_NAME",
+          "data_type": "VARCHAR",
+          "description": "Full legal name of the client",
+          "pii": true,
+          "nullable": false,
+          "primary_key": false,
+          "foreign_key": null
+        }
+      ],
+      "relationships": ["FACT_TRANSACTIONS"]
+    }
+  ],
+  "extraction_confidence": 0.95
+}
+
+If no tables are found, return: {"tables": [], "extraction_confidence": 0}

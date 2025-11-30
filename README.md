@@ -1,6 +1,6 @@
 # 🔗 snowlink-ai
 
-**Intelligent bi-directional sync between Atlassian (Jira + Confluence) and Snowflake using OpenAI GPT-4o**
+**Intelligent bi-directional sync between Atlassian (Jira + Confluence) and Snowflake using OpenAI GPT-5**
 
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--5-green.svg)
